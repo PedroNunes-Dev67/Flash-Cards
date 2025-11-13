@@ -7,10 +7,11 @@ export default function Home(){
     <main className={styles.container}>
       <Image src= "/flash-brain1.0.jpg" width={200} height={120} className={styles.Image} alt='logo'></Image>
       <div className={styles.form}>
-        <h2>Entrar na sua conta</h2>
+        <h1>Já possui uma conta?</h1>
+        <h2>Faça seu login e <span>bons estudos!</span></h2>
         <form>
-          <input type="text" required  placeholder='Email'className={styles.inputs} /> <br/>
-          <input type="password" placeholder='Senha' required className={styles.inputs} /><br />
+          <input type="text" required  placeholder='Email'className={styles.inputs} />
+          <input type="password" placeholder='Senha' required className={styles.inputs} />
           <input type="submit" value={"Entrar"} className={styles.botao} />
         </form>
         <span className={styles.span}>Esqueceu sua senha?</span>
