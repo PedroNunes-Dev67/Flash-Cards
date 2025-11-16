@@ -9,11 +9,17 @@ body {
 }
 
 body {
+  min-height: 100vh;
+  flex-direction: column;
+  display: flex;
   color: white;
   background-image: url(/fundo-flashcards.png);
   font-family: 'Poppins', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+main {
+    flex-grow: 1; 
 }
 
 .navbar1 {

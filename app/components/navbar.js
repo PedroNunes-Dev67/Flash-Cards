@@ -22,6 +22,9 @@ export default function Navbar() {
                 <li>
                     <Link href="/pages/suporte">Suporte</Link>
                 </li>
+                <li>
+                    <Link href="/pages/game-flash">Flash cards</Link>
+                </li>
             </ul>
         </nav>
     );
