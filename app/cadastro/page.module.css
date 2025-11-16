@@ -80,6 +80,7 @@
     font-size: 15px;
     font-family: 'Poppins', sans-serif;
 
+    cursor: pointer;
     transition: 0.3s ease;
 }
 .botao:hover{
@@ -96,7 +97,7 @@
     text-align: center;
     color: aliceblue;
 }
-.inputs[type="email"] {
+.inputs{
     width: 300px;
     height: 45px;
     padding: 0 15px;
