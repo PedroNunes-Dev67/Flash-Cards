@@ -7,6 +7,7 @@ export default function PagesLayout({ children }) {
       <main>
         {children} 
       </main>
+
     </>
   );
 }
