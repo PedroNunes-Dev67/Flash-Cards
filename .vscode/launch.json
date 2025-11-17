@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-FlashBrainBackendApplication<FlashBrain-Backend>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "FlashBrain_Backend.FlashBrainBackendApplication",
+            "projectName": "FlashBrain-Backend",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
