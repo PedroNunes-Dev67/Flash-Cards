@@ -1,6 +1,6 @@
 'use client'
 
-
+import axios from 'axios'
 import Link from 'next/link'
 import styles from './page.module.css'
 import Image from 'next/image'
@@ -11,13 +11,21 @@ export default function Home(){
   const [email,setEmail] = useState("");
   const [senha,setSenha] = useState("");
 
-  function handlerLogin(e){
+  async function handlerLogin(e){
     e.preventDefault();
 
-    if(email === "admin@gmail.com" && senha === "1234"){
-      window.location.href="/pages/home"
+    try{
+      const response = await axios.get("http://localhost:8080/usuario/"+email);
+      console.log(response)
+      if(response.data.email === email && response.data.senha === senha){
+        window.location.href = "/pages/home";
+      }
+      else{
+        alert("Email ou senha incorretos!")
+      }
     }
-    else{
+    catch(error){
+      alert("Usário não cadastrado")
       window.location.reload();
     }
     
