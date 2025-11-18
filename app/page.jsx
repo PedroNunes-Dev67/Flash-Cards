@@ -15,17 +15,12 @@ export default function Home(){
     e.preventDefault();
 
     try{
-      const response = await axios.get("http://localhost:8080/usuario/"+email);
-      console.log(response)
-      if(response.data.email === email && response.data.senha === senha){
-        window.location.href = "/pages/home";
-      }
-      else{
-        alert("Email ou senha incorretos!")
-      }
+      const response = await axios.post("http://localhost:8080/usuario/login",{email,senha});
+    
+      window.location.href = "/pages/home"
     }
     catch(error){
-      alert("Usário não cadastrado")
+      alert("Email ou senha incorretos")
       window.location.reload();
     }
     
