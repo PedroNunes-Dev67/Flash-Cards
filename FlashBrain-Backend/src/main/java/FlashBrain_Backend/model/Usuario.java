@@ -2,6 +2,8 @@ package FlashBrain_Backend.model;
 
 import jakarta.persistence.*;
 
+import java.util.Objects;
+
 @Entity
 public class Usuario {
 
@@ -52,5 +54,17 @@ public class Usuario {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Usuario usuario = (Usuario) o;
+        return Objects.equals(senha, usuario.senha);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(senha);
     }
 }

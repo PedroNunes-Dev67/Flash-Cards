@@ -3,6 +3,8 @@ package FlashBrain_Backend.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import FlashBrain_Backend.dto.UsuarioDto;
@@ -15,17 +17,9 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public Usuario findByEmail(String email) {
-        return usuarioRepository.findByEmail(email).orElse(null);
-    }
-
-    public List<Usuario> listaUsuario(){
-        return usuarioRepository.findAll();
-    }
-
     public Usuario cadastro(UsuarioDto usuarioDto){
 
-        Usuario usuario = findByEmail(usuarioDto.getEmail());
+        Usuario usuario = usuarioRepository.findByEmail(usuarioDto.getEmail()).orElse(null);
 
         if (usuario != null){
             return null;
@@ -35,18 +29,35 @@ public class UsuarioService {
         }
     }
 
-    public Usuario updateUsuario(Long id, UsuarioDto usuarioDto){
+    public Usuario updateUsuario(UsuarioDto usuarioDto){
 
-        Usuario usuario = usuarioRepository.findById(id).orElse(null);
+        Usuario usuario = usuarioRepository.findByEmail(usuarioDto.getEmail()).orElse(null);
 
-        if (usuario == null){
+        if (usuario == null) {
             return null;
-        }else {
-            if (usuario.getSenha().equals(usuarioDto.getSenha())){
-                return null;
-            }
+        }
+        else if (usuario.getSenha().equals(usuarioDto.getSenha())){
+            return null;
+        }
+        else{
             usuario.setSenha(usuarioDto.getSenha());
             return usuarioRepository.save(usuario);
         }
+    }
+
+    public ResponseEntity<Void> login(UsuarioDto usuarioDto){
+
+        Usuario usuario = usuarioRepository.findByEmail(usuarioDto.getEmail()).orElse(null);
+
+        if (usuario == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        else if (!usuario.getSenha().equals(usuarioDto.getSenha())){
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
+        }
+        else{
+            return ResponseEntity.ok().build();
+        }
+
     }
 }
