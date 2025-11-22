@@ -1,12 +1,9 @@
 package FlashBrain_Backend.service;
 
-import java.util.List;
-
+import FlashBrain_Backend.dto.UsuarioResponseDto;
+import FlashBrain_Backend.exceptions.ResourceUserException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import FlashBrain_Backend.dto.UsuarioDto;
 import FlashBrain_Backend.model.Usuario;
 import FlashBrain_Backend.repository.UsuarioRepository;
@@ -17,47 +14,33 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public Usuario cadastro(UsuarioDto usuarioDto){
+    public UsuarioResponseDto cadastro(UsuarioDto usuarioDto){
 
-        Usuario usuario = usuarioRepository.findByEmail(usuarioDto.getEmail()).orElse(null);
+        if (usuarioRepository.findByEmail(usuarioDto.getEmail()).isPresent()){
+            throw new ResourceUserException("Erro! Usuario já cadastrado");
+        }
+        Usuario usuario = new Usuario(usuarioDto.getNome(),usuarioDto.getEmail(),usuarioDto.getSenha());
+        usuarioRepository.save(usuario);
+        return new UsuarioResponseDto(usuario);
 
-        if (usuario != null){
-            return null;
-        }
-        else {
-            return usuario = usuarioRepository.save(new Usuario(usuarioDto.getNome(), usuarioDto.getEmail(), usuarioDto.getSenha()));
-        }
     }
 
-    public Usuario updateUsuario(UsuarioDto usuarioDto){
+    public Usuario updateUsuario(Long id, UsuarioDto usuarioDto){
 
-        Usuario usuario = usuarioRepository.findByEmail(usuarioDto.getEmail()).orElse(null);
+            Usuario user = usuarioRepository.findById(id)
+                    .orElseThrow(() -> new ResourceUserException("Erro! Usuário não cadastrado!"));
 
-        if (usuario == null) {
-            return null;
-        }
-        else if (usuario.getSenha().equals(usuarioDto.getSenha())){
-            return null;
-        }
-        else{
-            usuario.setSenha(usuarioDto.getSenha());
-            return usuarioRepository.save(usuario);
-        }
+            if (user.getSenha().equals(usuarioDto.getSenha())){
+                throw new ResourceUserException("Erro! Senha não pode ser igual a anterior!");
+            }
+            user.setSenha(usuarioDto.getSenha());
+            return usuarioRepository.save(user);
     }
 
-    public ResponseEntity<Void> login(UsuarioDto usuarioDto){
+    public Usuario login(UsuarioDto usuarioDto){
 
-        Usuario usuario = usuarioRepository.findByEmail(usuarioDto.getEmail()).orElse(null);
-
-        if (usuario == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        else if (!usuario.getSenha().equals(usuarioDto.getSenha())){
-            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
-        }
-        else{
-            return ResponseEntity.ok().build();
-        }
-
+        return usuarioRepository.findByEmail(usuarioDto.getEmail())
+                .filter(usuario -> usuario.getSenha().equals(usuarioDto.getSenha()))
+                .orElseThrow(() -> new ResourceUserException("Erro! Email ou senha incorretos!"));
     }
 }
