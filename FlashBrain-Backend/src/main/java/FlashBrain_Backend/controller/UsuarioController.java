@@ -11,7 +11,7 @@ import FlashBrain_Backend.service.UsuarioService;
 import jakarta.validation.Valid;
 
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/usuario")
 public class UsuarioController {
