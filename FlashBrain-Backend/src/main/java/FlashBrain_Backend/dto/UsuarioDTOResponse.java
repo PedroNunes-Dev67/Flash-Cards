@@ -2,13 +2,13 @@ package FlashBrain_Backend.dto;
 
 import FlashBrain_Backend.model.Usuario;
 
-public class UsuarioResponseDto {
+public class UsuarioDTOResponse {
 
     private Long id;
     private String nome;
     private String email;
 
-    public UsuarioResponseDto(Usuario usuario) {
+    public UsuarioDTOResponse(Usuario usuario) {
 
         this.id = usuario.getId();
         this.nome = usuario.getNome();

@@ -1,10 +1,17 @@
 package FlashBrain_Backend.service;
 
-import FlashBrain_Backend.dto.UsuarioResponseDto;
+import FlashBrain_Backend.dto.LoginDTO;
+import FlashBrain_Backend.dto.TokenDTOResponse;
+import FlashBrain_Backend.dto.UsuarioDTOResponse;
 import FlashBrain_Backend.exceptions.ResourceUserException;
+import FlashBrain_Backend.model.enums.RoleUsuario;
+import FlashBrain_Backend.security.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import FlashBrain_Backend.dto.UsuarioDto;
+import FlashBrain_Backend.dto.UsuarioDtoRequest;
 import FlashBrain_Backend.model.Usuario;
 import FlashBrain_Backend.repository.UsuarioRepository;
 
@@ -13,34 +20,34 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+    @Autowired
+    private TokenService tokenService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
-    public UsuarioResponseDto cadastro(UsuarioDto usuarioDto){
+    public UsuarioDTOResponse cadastro(UsuarioDtoRequest usuarioDtoRequest) {
 
-        if (usuarioRepository.findByEmail(usuarioDto.getEmail()).isPresent()){
-            throw new ResourceUserException("Erro! Usuario já cadastrado");
-        }
-        Usuario usuario = new Usuario(usuarioDto.getNome(),usuarioDto.getEmail(),usuarioDto.getSenha());
+        if (usuarioRepository.findByEmail(usuarioDtoRequest.getEmail()) != null) throw new ResourceUserException("Usuário já cadastrado");
+
+        String senha = new BCryptPasswordEncoder().encode(usuarioDtoRequest.getSenha());
+
+        Usuario usuario = new Usuario(usuarioDtoRequest.getNome(), usuarioDtoRequest.getEmail(), senha);
+
+        usuario.setRole(RoleUsuario.USUARIO);
         usuarioRepository.save(usuario);
-        return new UsuarioResponseDto(usuario);
+
+        return new UsuarioDTOResponse(usuario);
 
     }
 
-    public Usuario updateUsuario(Long id, UsuarioDto usuarioDto){
+    public TokenDTOResponse login(LoginDTO loginDTO){
 
-            Usuario user = usuarioRepository.findById(id)
-                    .orElseThrow(() -> new ResourceUserException("Erro! Usuário não cadastrado!"));
+        var username = new UsernamePasswordAuthenticationToken(loginDTO.email(),loginDTO.senha());
 
-            if (user.getSenha().equals(usuarioDto.getSenha())){
-                throw new ResourceUserException("Erro! Senha não pode ser igual a anterior!");
-            }
-            user.setSenha(usuarioDto.getSenha());
-            return usuarioRepository.save(user);
-    }
+        var authentication = authenticationManager.authenticate(username);
 
-    public Usuario login(UsuarioDto usuarioDto){
+        String token = tokenService.generateToken((Usuario) authentication.getPrincipal());
 
-        return usuarioRepository.findByEmail(usuarioDto.getEmail())
-                .filter(usuario -> usuario.getSenha().equals(usuarioDto.getSenha()))
-                .orElseThrow(() -> new ResourceUserException("Erro! Email ou senha incorretos!"));
+        return new TokenDTOResponse(token);
     }
 }
