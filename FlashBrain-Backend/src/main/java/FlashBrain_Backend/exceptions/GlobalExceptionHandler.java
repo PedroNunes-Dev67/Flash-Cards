@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.time.Instant;
 
 @ControllerAdvice
-public class ExceptionUserHandler {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceUserException.class)
     public ResponseEntity<ResponseError> exceptionUserHandler(ResourceUserException e, HttpServletRequest request){

@@ -1,44 +1,43 @@
 package FlashBrain_Backend.controller;
 
-import FlashBrain_Backend.dto.UsuarioResponseDto;
+import FlashBrain_Backend.dto.LoginDTO;
+import FlashBrain_Backend.dto.TokenDTOResponse;
+import FlashBrain_Backend.dto.UsuarioDTOResponse;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import FlashBrain_Backend.dto.UsuarioDto;
+import FlashBrain_Backend.dto.UsuarioDtoRequest;
 import FlashBrain_Backend.service.UsuarioService;
 import jakarta.validation.Valid;
 
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/usuario")
+@RequestMapping("/usuarios")
 public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
 
+    @PostMapping("/cadastro")
+    public ResponseEntity<UsuarioDTOResponse> cadastro(@RequestBody @Valid UsuarioDtoRequest usuarioDtoRequest){
 
-    @PostMapping("/novoUsuario")
-    public ResponseEntity<UsuarioResponseDto> cadastro(@RequestBody @Valid UsuarioDto usuarioDto){
+        UsuarioDTOResponse usuario = usuarioService.cadastro(usuarioDtoRequest);
 
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioService.cadastro(usuarioDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody @Valid UsuarioDto usuarioDto){
+    public ResponseEntity<TokenDTOResponse> login(@RequestBody @Valid LoginDTO loginDTO){
 
-        usuarioService.login(usuarioDto);
-        return ResponseEntity.ok().build();
+        TokenDTOResponse token = usuarioService.login(loginDTO);
 
+        return ResponseEntity.ok(token);
     }
 
-    @PatchMapping("/updateUsuario/{id}")
-    public ResponseEntity<Void> updateUsuario(@PathVariable(name = "id") Long id, @RequestBody @Valid UsuarioDto usuarioDto){
 
-        usuarioService.updateUsuario(id, usuarioDto);
-        return ResponseEntity.ok().build();
-    }
+
 }
